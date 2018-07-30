@@ -1,7 +1,7 @@
 {
-  "name": "mern_shopping_list",
+  "name": "little-planet-1564-api",
   "version": "1.0.0",
-  "description": "Shopping list built with the MERN stack",
+  "description": "backend for little-planet-1564",
   "main": "server.js",
   "scripts": {
     "client-install": "npm install --prefix client",
