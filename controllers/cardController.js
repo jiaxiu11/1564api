@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
 import {cardSchema, noteShema, boardSchema} from '../models/1564models';
-import { Note } from './noteController'
-import { Board } from './boardController'
-
+import { Note } from './noteController';
+import { Board } from './boardController';
+import algoliasearch from 'algoliasearch';
+import { client, index } from './noteController';
 
 export const addNewCard = (req, res) => {
   Board.findOne({'notes._id': `${req.params.noteId}`}, (error, parentBoard) => {
@@ -16,6 +17,13 @@ export const addNewCard = (req, res) => {
   //   }
     var newCard = parentNote.cards.create(req.body);
     parentNote.cards.push(newCard);
+    //update algolia indexing
+    index.partialUpdateObject({objectID: req.params.noteId, cards: parentNote.cards},
+      function(err, content) {
+        if (err) throw err;
+        console.log(content);
+      });
+    //continue saving to mongo
     parentBoard.save((err, note) => {
         if(err) {
           res.send(err);
@@ -61,6 +69,13 @@ export const updateCard = (req, res) => {
   //     res.send(err);
   //   }
     var newCard = parentNote.cards.id(req.params.cardId).set(req.body);
+    //update algolia indexing
+    index.partialUpdateObject({objectID: req.params.noteId, cards: parentNote.cards},
+      function(err, content) {
+        if (err) throw err;
+        console.log(content);
+      });
+    //continue saving to mongo
     parentBoard.save((err, note) => {
         if(err) {
           res.send(err);
@@ -81,6 +96,13 @@ export const deleteCard = (req, res) => {
   //     res.send(err);
   //   }
     parentNote.cards.id(req.params.cardId).remove();
+    //update algolia indexing
+    index.partialUpdateObject({objectID: req.params.noteId, cards: parentNote.cards},
+      function(err, content) {
+        if (err) throw err;
+        console.log(content);
+      });
+    //continue saving to mongo
     parentBoard.save((err, note) => {
         if(err) {
           res.send(err);

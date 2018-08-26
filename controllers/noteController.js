@@ -1,6 +1,19 @@
 import mongoose from 'mongoose';
 import {noteSchema, cardSchema, boardSchema} from '../models/1564models';
 import{ Board } from './boardController';
+import algoliasearch from 'algoliasearch';
+
+export const client = algoliasearch('D77JU4R9TE', 'a54ccb76e1416dd0347dc7f82eb9589b');
+export const index = client.initIndex('prod_NOTES');
+index.setSettings({attributesForFaceting: ["boardId"],
+attributesToHighlight: [
+  'noteTitle',
+  'cards'
+],highlightPreTag: '<b class = "highlight">',
+highlightPostTag: '</b>'}, function(err, content) {
+      console.log(content);
+    });
+
 
 export const addNewNote = (req, res) => {
   Board.findById(req.params.boardId, (error, parentBoard) => {
@@ -8,6 +21,13 @@ export const addNewNote = (req, res) => {
       res.send(error);
     }
     var newNote = parentBoard.notes.create(req.body);
+    //add object to algolia index
+    var objectID = newNote._id;
+    index.addObject({boardId : req.params.boardId,
+      objectID: objectID, ...req.body}, function(err, content) {
+      console.log(content);
+    });
+    //continue saving the newnote
     parentBoard.notes.push(newNote);
     parentBoard.save((err, board) => {
         if(err) {
@@ -35,6 +55,13 @@ export const updateNote = (req, res) => {
     if (error) {
       res.send(err);
     }
+    //update algolia indexing
+    index.partialUpdateObject({objectID: req.params.noteId, ...req.body},
+      function(err, content) {
+        if (err) throw err;
+        console.log(content);
+      });
+    //continue updating note in database
     var newNote = parentBoard.notes.id(req.params.noteId).set(req.body);
     parentBoard.save((err, board) => {
         if(err) {
@@ -50,6 +77,12 @@ export const deleteNote = (req, res) => {
     if (error) {
       res.send(err);
     }
+    //delete from algolia index
+    index.deleteObject(`${req.params.noteId}`, function(err, content) {
+      if (err) throw err;
+      console.log(content);
+    });
+    //deleting from database
     parentBoard.notes.id(req.params.noteId).remove();
     parentBoard.save((err, note) => {
         if(err) {
