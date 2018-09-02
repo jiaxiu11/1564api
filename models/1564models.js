@@ -7,10 +7,10 @@ export const cardSchema = new Schema({
   cardContent: {
     type: String
   },
-  created_date: {
-    type: Date,
-    default: Date.now
-  }
+  // created_date: {
+  //   type: Date,
+  //   default: Date.now
+  // }
 });
 
 export const noteSchema = new Schema({
