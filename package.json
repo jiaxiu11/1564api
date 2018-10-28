@@ -2,6 +2,9 @@
   "name": "little-planet-1564-api",
   "version": "1.0.0",
   "description": "backend for little-planet-1564",
+  "engines": {
+    "node": "8.11.1"
+  },
   "main": "server.js",
   "scripts": {
     "client-install": "npm install --prefix client",
@@ -14,7 +17,7 @@
   "author": "Brad Traversy",
   "license": "MIT",
   "dependencies": {
-    "algoliasearch": "^3.30.0",
+    "algoliasearch": "^3.0.0",
     "jsonwebtoken": "^8.3.0",
     "bcrypt": "^3.0.0",
     "body-parser": "^1.18.3",
