@@ -3,7 +3,7 @@ import {noteSchema, cardSchema, boardSchema} from '../models/1564models';
 import{ Board } from './boardController';
 import algoliasearch from 'algoliasearch';
 
-export const client = algoliasearch('D77JU4R9TE', 'a54ccb76e1416dd0347dc7f82eb9589b');
+export const client = algoliasearch('99OSTG262A', 'db94d58b49cf8810a23e5b2e1fecfefc');
 export const index = client.initIndex('prod_NOTES');
 index.setSettings({attributesForFaceting: ["boardId"],
 attributesToHighlight: [
@@ -45,7 +45,6 @@ export const getNotes = (req, res) => {
     }
     res.json(parentBoard);//we send over the whole board here
     //res.json(parentBoard.notes);
-
   });
 };
 
@@ -92,72 +91,3 @@ export const deleteNote = (req, res) => {
     });
 });
 };
-
-
-
-
-/*
-i'll save the orginal code here
-
-export const Note = mongoose.model('Note', noteSchema);
-export const getCardWithId = (req, res) => {
-  Note.findById(req.params.noteId, (error, parentNote) => {
-    if (error) {
-      res.send(err);
-    }
-    var card = parentNote.cards.id(req.params.cardId);
-    res.json(card);
-  });
-};//i'll just leave it here first, might not use it
-
-
-export const addNewNote = (req, res) => {
-  let newNote = new Note(req.body);
-
-  newNote.save((err, note) => {
-    if (err) {
-      res.send(err);
-    }
-    res.json(note);
-  });
-};
-
-export const getNotes = (req, res) => {
-  Note.find({}, (err, notes) => {
-    if (err) {
-      res.send(err);
-    }
-    res.json(notes);
-  });
-};
-
-export const getNoteWithId = (req, res) => {
-  Note.findById(req.params.noteId, (error, note) => {
-    if (err) {
-      res.send(err);
-    }
-    res.json(note);
-  });
-};//i'll just leave it here first, might not use it
-
-export const updateNote = (req, res) => {
-  //console.log(typeof req.params.noteId)
-  Note.findOneAndUpdate({_id : req.params.noteId},//or {_id: req.params.noteId}
-req.body, {new : true}, (err, note) => { //the new option tells it to return the updated one
-  if (err) {
-    res.send(err);
-  }
-  res.json(note);
-});
-};
-
-export const deleteNote = (req, res) => {
-  Note.remove({_id: req.params.noteId}, (err, note) => {
-  if (err) {
-    res.send(err);
-  }
-  res.json({message: 'delete successful'});
-});
-};
-
-*/
